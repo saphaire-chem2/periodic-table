@@ -3,55 +3,48 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>낱말 퍼즐 교실</title>
+<title>낱말퍼즐 교실</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Nanum+Pen+Script&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --navy:#0A1628;--blue:#1A3A6B;--mid:#2356A8;--sky:#4A8FE7;
   --lite:#A8C8F8;--chalk:#EFF6FF;--white:#FFFFFF;--accent:#FFD166;
-  --green:#22C55E;--red:#EF4444;--border:#C8DCF8;
-  --shadow:0 4px 24px rgba(10,22,40,0.13);
+  --green:#16A34A;--red:#EF4444;--border:#C8DCF8;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{min-height:100vh;background:linear-gradient(135deg,#EBF3FF 0%,#F7FAFF 60%,#DDE9FA 100%);font-family:'Nanum Gothic',sans-serif;color:var(--navy);}
 
-.topnav{background:var(--blue);padding:0 2rem;height:56px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 12px rgba(10,22,40,0.18);}
-.logo{font-family:'Nanum Pen Script',cursive;font-size:26px;color:var(--white);letter-spacing:1px;}
+.topnav{background:var(--blue);padding:0 1.5rem;height:54px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(10,22,40,0.2);}
+.logo{font-family:'Nanum Pen Script',cursive;font-size:24px;color:var(--white);}
 .logo span{color:var(--accent);}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
-.nav-badge{background:rgba(255,255,255,0.15);color:var(--white);font-size:12px;padding:4px 12px;border-radius:20px;font-weight:700;}
+.nav-badge{background:rgba(255,255,255,0.15);color:var(--white);font-size:12px;padding:3px 12px;border-radius:20px;font-weight:700;}
 
-.wrapper{max-width:920px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.wrapper{max-width:880px;margin:0 auto;padding:1.75rem 1.25rem 4rem;}
 
-.chalkboard{background:var(--blue);border-radius:16px;padding:1.75rem 2.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden;box-shadow:var(--shadow);}
-.chalkboard::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,0.03) 28px,rgba(255,255,255,0.03) 29px),repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(255,255,255,0.03) 28px,rgba(255,255,255,0.03) 29px);pointer-events:none;}
+/* chalkboard */
+.cb{background:var(--blue);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(10,22,40,0.15);}
+.cb::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,0.025) 28px,rgba(255,255,255,0.025) 29px),repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(255,255,255,0.025) 28px,rgba(255,255,255,0.025) 29px);pointer-events:none;}
 .cb-title{font-family:'Nanum Pen Script',cursive;font-size:30px;color:var(--white);margin-bottom:4px;position:relative;}
 .cb-title span{color:var(--accent);}
 .cb-sub{font-size:13px;color:var(--lite);position:relative;}
-.chalk-line{height:3px;background:linear-gradient(90deg,rgba(255,255,255,0.6),rgba(255,255,255,0.1));border-radius:2px;margin:12px 0 14px;}
-.cb-steps{font-size:13px;color:var(--lite);line-height:2;position:relative;}
+.chalk-line{height:2px;background:linear-gradient(90deg,rgba(255,255,255,0.5),rgba(255,255,255,0.05));border-radius:2px;margin:12px 0;}
+.cb-steps{font-size:13px;color:var(--lite);line-height:2.1;position:relative;}
 
+/* cards */
 .card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:1.5rem;margin-bottom:1.25rem;box-shadow:0 2px 12px rgba(74,143,231,0.07);}
-.card-title{font-size:12px;font-weight:700;color:var(--mid);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.card-title::before{content:'';width:4px;height:16px;background:var(--sky);border-radius:2px;}
+.card-title{font-size:11px;font-weight:700;color:var(--mid);letter-spacing:.07em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';width:4px;height:16px;background:var(--sky);border-radius:2px;flex-shrink:0;}
 
-.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.25rem;background:var(--chalk);margin-bottom:12px;}
-.upload-zone:hover{border-color:var(--sky);}
-.upload-desc{font-size:12px;color:#4A6FA5;line-height:1.7;margin-bottom:10px;}
-.upload-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.upload-result{font-size:12px;margin-top:8px;padding:6px 12px;border-radius:8px;}
-.upload-result.ok{background:#DCFCE7;color:#166534;}
-.upload-result.err{background:#FEE2E2;color:#991B1B;}
+/* forms */
+input[type=text],input[type=file],select{font-family:'Nanum Gothic',sans-serif;font-size:14px;height:40px;padding:0 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--white);color:var(--navy);outline:none;transition:border-color .2s,box-shadow .2s;}
+input[type=text]:focus,select:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(74,143,231,0.13);}
+input[type=file]{height:auto;padding:7px 10px;}
 
-.divider{display:flex;align-items:center;gap:10px;margin:12px 0;font-size:12px;color:#6B8CB8;font-weight:700;}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
-
-input[type=text],input[type=file],select{font-family:'Nanum Gothic',sans-serif;font-size:14px;height:38px;padding:0 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);color:var(--navy);outline:none;transition:border-color .2s;}
-input[type=text]:focus,select:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(74,143,231,0.12);}
-input[type=file]{height:auto;padding:6px 10px;}
-
-.btn{font-family:'Nanum Gothic',sans-serif;font-size:13px;font-weight:700;height:38px;padding:0 16px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
+/* buttons */
+.btn{font-family:'Nanum Gothic',sans-serif;font-size:13px;font-weight:700;height:40px;padding:0 18px;border-radius:9px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
 .btn-primary{background:var(--mid);color:var(--white);}
 .btn-primary:hover{background:var(--blue);}
 .btn-sky{background:var(--sky);color:var(--white);}
@@ -60,50 +53,83 @@ input[type=file]{height:auto;padding:6px 10px;}
 .btn-outline:hover{background:var(--chalk);}
 .btn-accent{background:var(--accent);color:var(--navy);}
 .btn-accent:hover{opacity:.88;}
-.btn-green{background:#16A34A;color:var(--white);}
+.btn-green{background:var(--green);color:var(--white);}
 .btn-green:hover{background:#15803D;}
-.btn-lg{height:46px;font-size:15px;padding:0 24px;border-radius:10px;width:100%;}
+.btn-red{background:#FEE2E2;color:#991B1B;border:1.5px solid #FCA5A5;}
+.btn-red:hover{background:#FECACA;}
+.btn-lg{height:48px;font-size:15px;padding:0 28px;border-radius:11px;width:100%;}
 .btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* upload */
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.25rem;background:var(--chalk);margin-bottom:12px;transition:border-color .2s;}
+.upload-zone:hover{border-color:var(--sky);}
+.upload-desc{font-size:12px;color:#4A6FA5;line-height:1.7;margin-bottom:10px;}
+.upload-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.upload-result{font-size:12px;margin-top:8px;padding:6px 12px;border-radius:8px;}
+.upload-result.ok{background:#DCFCE7;color:#166534;}
+.upload-result.err{background:#FEE2E2;color:#991B1B;}
+
+.divider{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:12px;color:#6B8CB8;font-weight:700;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
 .chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--chalk);border:1.5px solid var(--border);border-radius:20px;font-size:13px;font-weight:700;color:var(--blue);}
-.chip button{background:none;border:none;cursor:pointer;color:#6B8CB8;font-size:13px;padding:0;}
+.chip button{background:none;border:none;cursor:pointer;color:#6B8CB8;font-size:13px;padding:0;line-height:1;}
 .chip button:hover{color:var(--red);}
 
-/* Student link table */
-.link-table{width:100%;border-collapse:collapse;font-size:13px;}
-.link-table th{background:var(--chalk);padding:9px 12px;text-align:left;font-weight:700;color:var(--mid);border-bottom:2px solid var(--border);font-size:11px;letter-spacing:.04em;text-transform:uppercase;}
-.link-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
-.link-table tr:last-child td{border-bottom:none;}
-.link-table tr:hover td{background:var(--chalk);}
-.url-cell{font-size:11px;color:#4A6FA5;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
-.status-pill{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;}
-.status-done{background:#DCFCE7;color:#166534;}
-.status-pending{background:#FEF9C3;color:#854D0E;}
-.status-count{background:#DBEAFE;color:#1E40AF;}
+/* QR section */
+.qr-section{display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:start;}
+.qr-box{background:var(--white);border:3px solid var(--mid);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;min-width:180px;}
+.qr-box #qrcode{width:148px;height:148px;}
+.qr-label{font-size:11px;font-weight:700;color:var(--mid);letter-spacing:.04em;text-align:center;}
+.qr-url{font-size:10px;color:#4A6FA5;word-break:break-all;text-align:center;max-width:148px;}
 
-/* Student input screen */
-.student-header{background:linear-gradient(135deg,var(--blue),var(--mid));border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;color:var(--white);}
-.student-header h2{font-family:'Nanum Pen Script',cursive;font-size:28px;margin-bottom:4px;}
-.student-header .sh-sub{font-size:13px;color:var(--lite);}
+/* student table */
+.stu-table{width:100%;border-collapse:collapse;font-size:13px;}
+.stu-table th{background:var(--chalk);padding:9px 12px;text-align:left;font-weight:700;color:var(--mid);border-bottom:2px solid var(--border);font-size:11px;letter-spacing:.04em;text-transform:uppercase;}
+.stu-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.stu-table tr:last-child td{border-bottom:none;}
+.stu-table tr:hover td{background:var(--chalk);}
+.pill{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;}
+.pill-done{background:#DCFCE7;color:#166534;}
+.pill-partial{background:#DBEAFE;color:#1E40AF;}
+.pill-none{background:#FEF9C3;color:#854D0E;}
 
-.word-slots{display:flex;flex-direction:column;gap:14px;margin-bottom:1rem;}
-.word-slot{background:var(--white);border:2px solid var(--border);border-radius:12px;padding:16px 18px;}
-.word-slot.filled{border-color:var(--sky);background:var(--chalk);}
-.ws-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.ws-num{width:28px;height:28px;border-radius:50%;background:var(--mid);color:var(--white);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.ws-title{font-size:14px;font-weight:700;color:var(--navy);}
-.ws-fields{display:grid;grid-template-columns:1fr 2fr auto;gap:8px;align-items:center;}
+/* progress */
+.progress-bar{height:8px;background:#DBEAFE;border-radius:4px;overflow:hidden;margin:8px 0;}
+.progress-fill{height:100%;background:var(--mid);border-radius:4px;transition:width .4s;}
 
-/* Puzzle / solve */
-.tabs{display:flex;gap:4px;margin-bottom:1.25rem;background:var(--chalk);padding:5px;border-radius:12px;border:1.5px solid var(--border);}
-.tab{flex:1;padding:9px 0;border:none;background:transparent;cursor:pointer;font-family:'Nanum Gothic',sans-serif;font-size:13px;font-weight:700;color:#4A6FA5;border-radius:8px;transition:all .15s;}
-.tab.active{background:var(--mid);color:var(--white);box-shadow:0 2px 8px rgba(35,86,168,0.25);}
-.tab:hover:not(.active){background:var(--border);}
-.panel{display:none;}.panel.active{display:block;}
+/* ── STUDENT INPUT SCREEN ── */
+.stu-header{background:linear-gradient(135deg,var(--blue),var(--mid));border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;color:var(--white);text-align:center;}
+.stu-header h2{font-family:'Nanum Pen Script',cursive;font-size:32px;margin-bottom:4px;}
+.stu-header .sh-sub{font-size:13px;color:var(--lite);}
+.stu-header .sh-name{font-size:18px;font-weight:700;color:var(--accent);margin-top:8px;}
 
-.solve-layout{display:grid;grid-template-columns:1fr 230px;gap:1.5rem;}
-#crossword-grid{display:inline-grid;border:2px solid var(--mid);border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:0 4px 16px rgba(35,86,168,0.12);}
+.name-screen{max-width:400px;margin:0 auto;text-align:center;}
+.name-screen h3{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.name-screen p{font-size:14px;color:#4A6FA5;margin-bottom:24px;}
+.name-select-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:360px;overflow-y:auto;}
+.name-btn{width:100%;padding:13px;background:var(--chalk);border:2px solid var(--border);border-radius:12px;font-family:'Nanum Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--navy);cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;justify-content:space-between;}
+.name-btn:hover{border-color:var(--sky);background:#EBF3FF;}
+.name-btn.submitted{border-color:#86EFAC;background:#F0FDF4;color:#166534;}
+
+.word-slots{display:flex;flex-direction:column;gap:14px;margin-bottom:1.25rem;}
+.ws{background:var(--white);border:2px solid var(--border);border-radius:13px;padding:16px 18px;transition:border-color .2s;}
+.ws.filled{border-color:var(--sky);}
+.ws-top{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ws-num{width:30px;height:30px;border-radius:50%;background:var(--mid);color:var(--white);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ws-title{font-size:14px;font-weight:700;color:var(--navy);flex:1;}
+.ws-check{color:var(--green);font-size:16px;}
+.ws-row{display:grid;grid-template-columns:140px 1fr auto;gap:8px;align-items:center;}
+.err{font-size:12px;color:var(--red);min-height:16px;margin-top:4px;}
+
+/* consolidated puzzle */
+.big-header{background:linear-gradient(135deg,#0A1628,#1A3A6B);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;color:var(--white);}
+.big-header h2{font-family:'Nanum Pen Script',cursive;font-size:30px;margin-bottom:4px;}
+.big-header p{font-size:13px;color:var(--lite);}
+
+.solve-layout{display:grid;grid-template-columns:1fr 220px;gap:1.5rem;}
+#crossword-grid{display:inline-grid;border:2px solid var(--mid);border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:0 4px 20px rgba(35,86,168,0.14);}
 .cell{width:38px;height:38px;position:relative;display:flex;align-items:center;justify-content:center;}
 .cell.black{background:var(--blue);}
 .cell.white{background:var(--white);border:1px solid #C8DCF8;cursor:pointer;transition:background .1s;}
@@ -113,15 +139,14 @@ input[type=file]{height:auto;padding:6px 10px;}
 .cell.white.ok{background:#DCFCE7;}
 .cell.white.ng{background:#FEE2E2;}
 .cell input{position:absolute;inset:0;width:100%;height:100%;border:none;background:transparent;text-align:center;font-size:16px;font-weight:700;color:var(--navy);outline:none;cursor:pointer;caret-color:transparent;font-family:'Nanum Gothic',sans-serif;}
-.cnum{position:absolute;top:2px;left:3px;font-size:8px;font-weight:700;color:var(--sky);line-height:1;pointer-events:none;z-index:1;}
+.cnum{position:absolute;top:2px;left:3px;font-size:7.5px;font-weight:700;color:var(--sky);line-height:1;pointer-events:none;z-index:1;}
 
-.clue-box{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;max-height:360px;overflow-y:auto;}
-.clue-sec-title{font-size:11px;font-weight:700;color:var(--mid);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-.ci{padding:5px 8px;border-radius:6px;cursor:pointer;display:flex;gap:6px;line-height:1.5;font-size:12px;transition:background .1s;}
+.clue-box{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;max-height:380px;overflow-y:auto;}
+.clue-sec-title{font-size:11px;font-weight:700;color:var(--mid);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.ci{padding:5px 7px;border-radius:6px;cursor:pointer;display:flex;gap:6px;line-height:1.5;font-size:12px;transition:background .1s;}
 .ci:hover{background:var(--chalk);}
 .ci.active{background:#DBEAFE;color:var(--mid);}
-.cn{font-weight:700;min-width:18px;color:var(--sky);}
-
+.cn{font-weight:700;min-width:20px;color:var(--sky);}
 .action-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
 .score-b{display:inline-block;padding:4px 12px;border-radius:8px;font-size:13px;font-weight:700;}
 .score-b.g{background:#DCFCE7;color:#166534;}
@@ -129,38 +154,23 @@ input[type=file]{height:auto;padding:6px 10px;}
 .score-b.r{background:#FEE2E2;color:#991B1B;}
 
 .section-lbl{font-size:11px;font-weight:700;color:var(--mid);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;}
-.no-content{font-size:13px;color:#4A6FA5;padding:2rem 0;text-align:center;}
+.info-tip{background:var(--chalk);border-left:4px solid var(--sky);border-radius:0 10px 10px 0;padding:12px 16px;font-size:13px;color:#1E40AF;line-height:1.7;}
 
-/* share modal */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(10,22,40,0.5);z-index:200;align-items:center;justify-content:center;}
+/* modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(10,22,40,0.55);z-index:300;align-items:center;justify-content:center;}
 .modal-bg.open{display:flex;}
-.modal{background:var(--white);border-radius:16px;padding:2rem;max-width:500px;width:90%;box-shadow:0 8px 40px rgba(10,22,40,0.25);}
+.modal{background:var(--white);border-radius:16px;padding:2rem;max-width:420px;width:92%;box-shadow:0 8px 40px rgba(10,22,40,0.25);}
 .modal h3{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px;}
 .modal-sub{font-size:13px;color:#4A6FA5;margin-bottom:16px;}
-.share-box{background:linear-gradient(135deg,#1A3A6B,#2356A8);border-radius:12px;padding:14px 18px;}
-.share-box-label{font-size:11px;font-weight:700;color:var(--lite);letter-spacing:.04em;margin-bottom:8px;}
-.share-url-row{display:flex;gap:8px;align-items:center;}
-.share-url{flex:1;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--white);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.copy-btn{background:var(--accent);color:var(--navy);border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nanum Gothic',sans-serif;}
-.copy-btn:hover{opacity:.9;}
-.copy-toast{font-size:11px;color:var(--accent);margin-top:6px;min-height:16px;}
+.modal-words{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.mw-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--chalk);border-radius:8px;font-size:13px;}
+.mw-word{font-weight:700;min-width:80px;}
+.mw-clue{color:#4A6FA5;flex:1;}
 
-/* progress bar */
-.progress-bar{height:8px;background:#DBEAFE;border-radius:4px;overflow:hidden;margin:8px 0;}
-.progress-fill{height:100%;background:var(--mid);border-radius:4px;transition:width .4s;}
-
-.err{font-size:12px;color:var(--red);min-height:16px;margin-top:4px;}
-.info{font-size:12px;color:#4A6FA5;margin-top:6px;}
-
-/* consolidated puzzle header */
-.big-puzzle-header{background:linear-gradient(135deg,#0A1628,#1A3A6B);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;color:var(--white);}
-.bph-title{font-family:'Nanum Pen Script',cursive;font-size:28px;margin-bottom:4px;}
-.bph-meta{font-size:13px;color:var(--lite);}
-
-@media(max-width:640px){
+@media(max-width:600px){
+  .qr-section{grid-template-columns:1fr;}
   .solve-layout{grid-template-columns:1fr;}
-  .ws-fields{grid-template-columns:1fr 1fr;}.ws-fields button{grid-column:span 2;}
-  .link-table td:nth-child(2){display:none;}
+  .ws-row{grid-template-columns:1fr 1fr;}.ws-row button{grid-column:span 2;}
 }
 </style>
 </head>
@@ -170,434 +180,489 @@ input[type=file]{height:auto;padding:6px 10px;}
   <div class="logo">📖 낱말퍼즐 <span>교실</span></div>
   <div class="nav-right">
     <div id="nav-info" class="nav-badge" style="display:none;"></div>
-    <button id="nav-teacher-btn" class="btn btn-outline" style="display:none;font-size:12px;color:var(--white);border-color:rgba(255,255,255,0.3);" onclick="goTeacher()">선생님 화면</button>
+    <button id="nav-teacher-btn" class="btn btn-outline" style="display:none;font-size:12px;color:rgba(255,255,255,0.85);border-color:rgba(255,255,255,0.25);" onclick="goTeacher()">🏫 선생님 화면</button>
   </div>
 </nav>
 
-<div class="wrapper" id="app-root"></div>
+<div class="wrapper" id="root"></div>
 
-<!-- Share Modal -->
-<div class="modal-bg" id="share-modal" onclick="if(event.target===this)closeModal()">
+<!-- Preview Modal -->
+<div class="modal-bg" id="preview-modal" onclick="if(event.target===this)closePreview()">
   <div class="modal">
-    <h3 id="modal-title">🔗 링크 공유</h3>
-    <p class="modal-sub" id="modal-sub"></p>
-    <div class="share-box">
-      <div class="share-box-label">공유 링크</div>
-      <div class="share-url-row">
-        <div class="share-url" id="modal-url"></div>
-        <button class="copy-btn" onclick="copyModal()">복사</button>
-      </div>
-      <div class="copy-toast" id="modal-toast"></div>
-    </div>
-    <div style="margin-top:16px;text-align:right;">
-      <button class="btn btn-outline" onclick="closeModal()">닫기</button>
+    <h3 id="pm-title"></h3>
+    <p class="modal-sub" id="pm-sub"></p>
+    <div class="modal-words" id="pm-words"></div>
+    <div style="text-align:right;">
+      <button class="btn btn-outline" onclick="closePreview()">닫기</button>
     </div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════
-const DB_KEY = 'xword_classroom_v3';
-let state = {
-  mode: 'teacher_setup',   // teacher_setup | teacher_manage | student_input | consolidated_puzzle
-  students: {},            // { name: { words:[{word,clue},...], submitted:bool } }
-  consolidated: null,      // layout after teacher merges
-  classTitle: '우리반 낱말퍼즐'
-};
+// ═══════════════════════════════════════════
+// STATE – stored in localStorage (teacher device)
+// Students write their data via URL hash → teacher reads on refresh
+// ═══════════════════════════════════════════
+const STORE = 'xword_v5';
+let S = { classTitle:'우리반 낱말퍼즐', students:{}, consolidated:null };
+// S.students[name] = { words:[{word,clue}], submitted:bool }
 
-// Persist to localStorage
-function save(){ try{ localStorage.setItem(DB_KEY, JSON.stringify(state)); }catch(e){} }
-function load(){
-  try{
-    const d = JSON.parse(localStorage.getItem(DB_KEY)||'null');
-    if(d && d.students) state = d;
-  }catch(e){}
-}
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const d=JSON.parse(localStorage.getItem(STORE)||'null'); if(d&&d.students) S=d; }catch(e){} }
 
-// ── URL helpers ──
-function encodeState(partial){
-  return btoa(unescape(encodeURIComponent(JSON.stringify(partial))));
+// ── Encode student submission into URL hash ──
+// When student submits, we encode their data into a URL they visit on teacher screen
+// Teacher screen reads the hash and imports it
+function encodeSubmission(name, words){
+  return btoa(unescape(encodeURIComponent(JSON.stringify({type:'submit',name,words}))));
 }
-function decodeState(hash){
-  try{ return JSON.parse(decodeURIComponent(escape(atob(hash)))); }catch(e){ return null; }
+function encodeStudentEntry(name){
+  // URL for student to open and fill in words
+  return btoa(unescape(encodeURIComponent(JSON.stringify({type:'student',name,classTitle:S.classTitle,students:Object.keys(S.students)}))));
 }
-function makeStudentUrl(name){
-  const payload = encodeState({ view:'student', name, ts: Date.now() });
-  return location.origin + location.pathname + '#' + payload;
+function encodeTeacherView(){
+  return btoa(unescape(encodeURIComponent(JSON.stringify({type:'teacher'}))));
 }
-function makeTeacherUrl(){
-  const payload = encodeState({ view:'teacher' });
-  return location.origin + location.pathname + '#' + payload;
+function encodePuzzle(){
+  return btoa(unescape(encodeURIComponent(JSON.stringify({type:'puzzle',data:S.consolidated,classTitle:S.classTitle}))));
 }
-function makePuzzleUrl(){
-  const payload = encodeState({ view:'puzzle' });
-  return location.origin + location.pathname + '#' + payload;
+function makeUrl(hash){ return location.origin+location.pathname+'#'+hash; }
+
+function decodeHash(h){
+  try{ return JSON.parse(decodeURIComponent(escape(atob(h)))); }catch(e){ return null; }
 }
 
-// ══════════════════════════════════════════════
-//  ROUTER
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════
 function route(){
   load();
   const hash = location.hash.slice(1);
   if(hash){
-    const d = decodeState(hash);
+    const d = decodeHash(hash);
     if(d){
-      if(d.view === 'student' && d.name){
-        renderStudentInput(d.name);
-        return;
-      }
-      if(d.view === 'teacher'){
-        renderTeacher();
-        return;
-      }
-      if(d.view === 'puzzle'){
-        renderConsolidatedPuzzle();
-        return;
-      }
+      if(d.type==='student'){ renderStudentScreen(d); return; }
+      if(d.type==='submit'){ importSubmission(d); return; }
+      if(d.type==='teacher'){ renderTeacher(); return; }
+      if(d.type==='puzzle'){ renderPuzzleFromData(d.data, d.classTitle); return; }
     }
   }
-  // default: check if students exist
-  if(Object.keys(state.students).length > 0){
-    renderTeacher();
-  } else {
-    renderSetup();
-  }
+  if(Object.keys(S.students).length>0) renderTeacher();
+  else renderSetup();
 }
 
-function goTeacher(){
-  renderTeacher();
-}
+window.addEventListener('popstate', route);
+function goTeacher(){ history.pushState(null,'','#'+encodeTeacherView()); renderTeacher(); }
 
-// ══════════════════════════════════════════════
-//  SCREEN 1: TEACHER SETUP
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// SCREEN 1: SETUP
+// ═══════════════════════════════════════════
 function renderSetup(){
-  document.getElementById('nav-info').style.display='none';
-  document.getElementById('nav-teacher-btn').style.display='none';
-  document.getElementById('app-root').innerHTML = `
-    <div class="chalkboard">
+  setNav('선생님','none');
+  document.getElementById('root').innerHTML=`
+    <div class="cb">
       <div class="cb-title">한국어 낱말퍼즐 <span>교실</span></div>
       <div class="cb-sub">학생이 직접 단어를 입력하고, 모아서 하나의 큰 십자말풀이를 만들어요</div>
       <div class="chalk-line"></div>
-      <div class="cb-steps">
-        ① 학생 명단 입력 &nbsp;→&nbsp; ② 학생별 링크 공유 &nbsp;→&nbsp; ③ 각자 단어 3개 입력 &nbsp;→&nbsp; ④ 선생님이 취합 &amp; 퍼즐 생성
-      </div>
+      <div class="cb-steps">① 학생 명단 입력 → ② QR코드 화면 공유 → ③ 학생이 이름 선택 후 단어 입력 → ④ 선생님이 취합 &amp; 퍼즐 생성</div>
     </div>
 
     <div class="card">
       <div class="card-title">수업 제목</div>
-      <input type="text" id="class-title-inp" placeholder="예: 3학년 2반 봄 낱말퍼즐" style="width:100%;max-width:400px;" value="${state.classTitle}"/>
+      <input type="text" id="class-title" placeholder="예: 3학년 2반 봄 낱말퍼즐" value="${S.classTitle}" style="width:100%;max-width:420px;"/>
     </div>
 
     <div class="card">
-      <div class="card-title">엑셀/CSV로 학생 명단 불러오기</div>
+      <div class="card-title">학생 명단 입력</div>
       <div class="upload-zone">
-        <div class="upload-desc">
-          <strong>지원 형식:</strong> .xlsx, .xls, .csv &nbsp;|&nbsp; 첫 번째 열에 학생 이름 (1행 헤더 자동 감지)
-        </div>
+        <div class="upload-desc"><strong>지원 형식:</strong> .xlsx, .xls, .csv &nbsp;|&nbsp; 첫 번째 열에 학생 이름</div>
         <div class="upload-row">
-          <input type="file" id="excel-file" accept=".xlsx,.xls,.csv"/>
+          <input type="file" id="xl-file" accept=".xlsx,.xls,.csv"/>
           <button class="btn btn-sky" onclick="loadExcel()">📂 불러오기</button>
         </div>
-        <div id="upload-result"></div>
+        <div id="xl-result"></div>
       </div>
       <div class="divider">또는 직접 입력</div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <input type="text" id="new-student" placeholder="학생 이름" style="width:160px;" onkeydown="if(event.key==='Enter')addStudentManual()"/>
-        <button class="btn btn-primary" onclick="addStudentManual()">+ 추가</button>
-        <span id="stu-count" style="font-size:12px;color:#4A6FA5;"></span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <input type="text" id="stu-inp" placeholder="학생 이름" style="width:150px;" onkeydown="if(event.key==='Enter')addStu()"/>
+        <button class="btn btn-primary" onclick="addStu()">+ 추가</button>
+        <span id="stu-cnt" style="font-size:12px;color:#4A6FA5;"></span>
       </div>
       <div class="chips" id="stu-chips"></div>
-      <div id="start-wrap" style="display:none;margin-top:18px;">
-        <button class="btn btn-accent btn-lg" onclick="finishSetup()">▶ 명단 확정 &amp; 링크 생성하기</button>
+      <div id="setup-next" style="display:none;margin-top:18px;">
+        <button class="btn btn-accent btn-lg" onclick="finishSetup()">▶ 명단 확정 &amp; QR코드 생성</button>
       </div>
     </div>
   `;
+  refreshSetupUI();
 }
 
-function addStudentManual(){
-  const inp=document.getElementById('new-student');
+function addStu(){
+  const inp=document.getElementById('stu-inp');
   const n=inp.value.trim(); if(!n) return;
-  if(!state.students[n]) state.students[n]={words:[],submitted:false};
+  if(!S.students[n]) S.students[n]={words:[],submitted:false};
   inp.value=''; save(); refreshSetupUI();
 }
-
-function removeStudent(n){
-  delete state.students[n]; save(); refreshSetupUI();
-}
-
+function removeStu(n){ delete S.students[n]; save(); refreshSetupUI(); }
 function refreshSetupUI(){
-  const names=Object.keys(state.students);
+  const names=Object.keys(S.students);
   const chips=document.getElementById('stu-chips');
-  const count=document.getElementById('stu-count');
-  const wrap=document.getElementById('start-wrap');
+  const cnt=document.getElementById('stu-cnt');
+  const nxt=document.getElementById('setup-next');
   if(!chips) return;
-  count.textContent=names.length?`총 ${names.length}명`:'';
-  wrap.style.display=names.length?'block':'none';
-  chips.innerHTML=names.map(n=>`<div class="chip"><span>${n}</span><button onclick="removeStudent('${n}')">✕</button></div>`).join('');
+  cnt.textContent=names.length?`총 ${names.length}명`:'';
+  nxt.style.display=names.length?'block':'none';
+  chips.innerHTML=names.map(n=>`<div class="chip"><span>${n}</span><button onclick="removeStu('${n}')">✕</button></div>`).join('');
 }
 
 function loadExcel(){
-  const file=document.getElementById('excel-file').files[0];
-  if(!file){ showUploadResult('파일을 선택해주세요.','err'); return; }
+  const file=document.getElementById('xl-file').files[0];
+  if(!file){ showXlResult('파일을 선택해주세요.','err'); return; }
   const reader=new FileReader();
-  reader.onload=function(e){
+  reader.onload=e=>{
     try{
       let names=[];
       if(file.name.endsWith('.csv')){
-        const lines=e.target.result.split(/\r?\n/).filter(l=>l.trim());
-        lines.forEach((line,i)=>{
-          const first=line.split(',')[0].trim().replace(/^"|"$/g,'');
-          if(!first) return;
-          const lc=first.toLowerCase();
-          if(i===0&&(lc==='이름'||lc==='name'||lc==='학생'||lc==='학생이름')) return;
-          names.push(first);
+        e.target.result.split(/\r?\n/).filter(l=>l.trim()).forEach((line,i)=>{
+          const v=line.split(',')[0].trim().replace(/^"|"$/g,'');
+          if(!v) return;
+          if(i===0&&['이름','name','학생','학생이름'].includes(v.toLowerCase())) return;
+          names.push(v);
         });
       } else {
         const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
-        const ws=wb.Sheets[wb.SheetNames[0]];
-        XLSX.utils.sheet_to_json(ws,{header:1}).forEach((row,i)=>{
-          const val=row[0]!=null?String(row[0]).trim():'';
-          if(!val) return;
-          const lc=val.toLowerCase();
-          if(i===0&&(lc==='이름'||lc==='name'||lc==='학생'||lc==='학생이름')) return;
-          names.push(val);
+        XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1}).forEach((row,i)=>{
+          const v=row[0]!=null?String(row[0]).trim():''; if(!v) return;
+          if(i===0&&['이름','name','학생','학생이름'].includes(v.toLowerCase())) return;
+          names.push(v);
         });
       }
       names=names.filter(n=>n.length>0);
-      if(!names.length){ showUploadResult('이름을 찾을 수 없어요. 첫 번째 열을 확인해주세요.','err'); return; }
-      names.forEach(n=>{ if(!state.students[n]) state.students[n]={words:[],submitted:false}; });
-      showUploadResult(`✓ ${names.length}명 불러오기 완료!`,'ok');
+      if(!names.length){ showXlResult('이름을 찾을 수 없어요.','err'); return; }
+      names.forEach(n=>{ if(!S.students[n]) S.students[n]={words:[],submitted:false}; });
+      showXlResult(`✓ ${names.length}명 불러오기 완료!`,'ok');
       save(); refreshSetupUI();
-    }catch(err){ showUploadResult('파일 오류: '+err.message,'err'); }
+    }catch(err){ showXlResult('파일 오류: '+err.message,'err'); }
   };
   if(file.name.endsWith('.csv')) reader.readAsText(file,'UTF-8');
   else reader.readAsArrayBuffer(file);
 }
-
-function showUploadResult(msg,type){
-  const el=document.getElementById('upload-result');
+function showXlResult(msg,type){
+  const el=document.getElementById('xl-result');
   if(el){ el.className='upload-result '+type; el.textContent=msg; }
 }
 
 function finishSetup(){
-  const t=document.getElementById('class-title-inp');
-  if(t) state.classTitle=t.value.trim()||'우리반 낱말퍼즐';
-  save();
-  renderTeacher();
+  const t=document.getElementById('class-title');
+  if(t) S.classTitle=t.value.trim()||'우리반 낱말퍼즐';
+  save(); renderTeacher();
 }
 
-// ══════════════════════════════════════════════
-//  SCREEN 2: TEACHER MANAGE
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// SCREEN 2: TEACHER MANAGE
+// ═══════════════════════════════════════════
 function renderTeacher(){
-  state.mode='teacher_manage';
-  const names=Object.keys(state.students);
-  const submitted=names.filter(n=>state.students[n].submitted).length;
-  const total=names.length;
-  document.getElementById('nav-info').style.display='inline-block';
-  document.getElementById('nav-info').textContent='선생님 화면';
-  document.getElementById('nav-teacher-btn').style.display='none';
+  load();
+  setNav('선생님 화면','none');
+  const names=Object.keys(S.students);
+  const submitted=names.filter(n=>S.students[n].submitted).length;
+  const pct=names.length?Math.round(submitted/names.length*100):0;
+  const anyWords=names.some(n=>S.students[n].words.length>0);
+
+  // build the class entry URL (QR target)
+  const classUrl=makeUrl(encodeStudentEntry('__class__'));
 
   const rows=names.map(n=>{
-    const s=state.students[n];
-    const wc=s.words.length;
-    const statusHtml=s.submitted
-      ? `<span class="status-pill status-done">✓ 제출완료 (${wc}단어)</span>`
-      : (wc>0
-        ? `<span class="status-pill status-count">${wc}개 입력중</span>`
-        : `<span class="status-pill status-pending">미입력</span>`);
-    const url=makeStudentUrl(n);
+    const s=S.students[n];
+    const wc=s.words.filter(w=>w.word).length;
+    const pill=s.submitted
+      ?`<span class="pill pill-done">✓ 제출 (${wc}단어)</span>`
+      :(wc>0?`<span class="pill pill-partial">${wc}개 입력중</span>`:`<span class="pill pill-none">미입력</span>`);
+    const wordsHtml=s.words.filter(w=>w.word).map(w=>`<strong>${w.word}</strong>`).join(', ')||'—';
     return `<tr>
       <td style="font-weight:700;">${n}</td>
-      <td class="url-cell" title="${url}" onclick="showShareModal('${n}')">${url}</td>
-      <td>${statusHtml}</td>
-      <td>
-        <button class="btn btn-sky" style="height:30px;font-size:11px;padding:0 10px;" onclick="showShareModal('${n}')">🔗 링크</button>
-      </td>
+      <td>${wordsHtml}</td>
+      <td>${pill}</td>
+      <td><button class="btn btn-outline" style="height:28px;font-size:11px;padding:0 10px;" onclick="previewStudent('${n}')">보기</button></td>
     </tr>`;
   }).join('');
 
-  const pct=total?Math.round(submitted/total*100):0;
-  const allDone=submitted===total && total>0;
-  // check if all students have at least one word even if not formally submitted
-  const anyWords=names.some(n=>state.students[n].words.length>0);
+  document.getElementById('root').innerHTML=`
+    <div class="cb">
+      <div class="cb-title">${S.classTitle}</div>
+      <div class="cb-sub">선생님 관리 화면</div>
+    </div>
 
-  document.getElementById('app-root').innerHTML=`
-    <div class="chalkboard">
-      <div class="cb-title">${state.classTitle}</div>
-      <div class="cb-sub">선생님 관리 화면 &nbsp;|&nbsp; 학생별 링크를 공유하고 진행 상황을 확인하세요</div>
+    <!-- QR Section -->
+    <div class="card">
+      <div class="card-title">📱 학생 접속 QR코드</div>
+      <div class="qr-section">
+        <div class="qr-box">
+          <div id="qrcode"></div>
+          <div class="qr-label">학생 접속 QR</div>
+          <div class="qr-url" id="qr-url-text"></div>
+        </div>
+        <div>
+          <div class="info-tip">
+            📲 <strong>이 QR코드를 화면에 띄워주세요!</strong><br>
+            학생들이 스캔하면 이름 선택 화면이 나와요.<br>
+            이름을 선택한 뒤 단어 3개와 힌트를 입력하고 제출하면 됩니다.<br><br>
+            📌 <strong>학생 제출 방법:</strong><br>
+            학생이 제출하면 <em>제출 완료 링크</em>가 생성돼요.<br>
+            그 링크를 카카오톡 등으로 선생님께 보내거나,<br>
+            선생님이 직접 학생 폰에서 링크를 열어 데이터를 가져오세요.
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-sky" onclick="copyQrUrl()">🔗 링크 복사</button>
+            <button class="btn btn-outline" onclick="refreshTeacher()">↺ 새로고침</button>
+            <button class="btn btn-outline" style="font-size:12px;" onclick="renderSetup()">+ 명단 수정</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Progress -->
     <div class="card">
       <div class="card-title">진행 상황</div>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="flex:1;min-width:200px;">
-          <div style="font-size:13px;color:#4A6FA5;margin-bottom:6px;">제출 완료 <strong style="color:var(--navy);">${submitted}</strong> / ${total}명</div>
-          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-        </div>
-        <button class="btn btn-outline" style="font-size:12px;" onclick="refreshTeacher()">↺ 새로고침</button>
+      <div style="font-size:13px;color:#4A6FA5;margin-bottom:6px;">제출 완료 <strong style="color:var(--navy);">${submitted}</strong> / ${names.length}명</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
         <button class="btn btn-green ${anyWords?'':'disabled'}" ${anyWords?'':'disabled'} onclick="consolidate()">🧩 취합 &amp; 퍼즐 생성</button>
+        ${S.consolidated?`<button class="btn btn-accent" onclick="showPuzzle()">▶ 완성 퍼즐 보기</button><button class="btn btn-sky" onclick="copyPuzzleUrl()">🔗 퍼즐 링크 공유</button>`:''}
+        <button class="btn btn-red" style="margin-left:auto;font-size:12px;" onclick="resetAll()">🗑 초기화</button>
       </div>
-      ${state.consolidated?`<div style="margin-top:10px;"><button class="btn btn-accent" onclick="showPuzzleShareModal()">🔗 완성된 퍼즐 링크 공유</button></div>`:''}
     </div>
 
-    <!-- Student link table -->
+    <!-- Student list -->
     <div class="card">
-      <div class="card-title">학생 링크 목록</div>
+      <div class="card-title">학생 현황</div>
       <div style="overflow-x:auto;">
-        <table class="link-table">
-          <thead><tr>
-            <th>이름</th><th>공유 링크</th><th>상태</th><th></th>
-          </tr></thead>
+        <table class="stu-table">
+          <thead><tr><th>이름</th><th>입력한 단어</th><th>상태</th><th></th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-outline" style="font-size:12px;" onclick="showAllLinksModal()">📋 전체 링크 복사</button>
-        <button class="btn btn-outline" style="font-size:12px;color:#dc2626;border-color:#fca5a5;" onclick="resetAll()">🗑 초기화</button>
-        <button class="btn btn-outline" style="font-size:12px;" onclick="renderSetup()">+ 명단 수정</button>
+    </div>
+  `;
+
+  // Build QR
+  const qrUrl=makeUrl(encodeStudentEntry('__class__'));
+  document.getElementById('qr-url-text').textContent=qrUrl;
+  try{
+    new QRCode(document.getElementById('qrcode'),{
+      text:qrUrl, width:148, height:148,
+      colorDark:'#1A3A6B', colorLight:'#FFFFFF',
+      correctLevel:QRCode.CorrectLevel.M
+    });
+  }catch(e){ document.getElementById('qrcode').textContent='QR 생성 오류'; }
+}
+
+let _qrUrl='';
+function copyQrUrl(){
+  _qrUrl=makeUrl(encodeStudentEntry('__class__'));
+  navigator.clipboard.writeText(_qrUrl).then(()=>alert('링크가 복사되었어요!')).catch(()=>prompt('링크를 복사하세요:',_qrUrl));
+}
+function copyPuzzleUrl(){
+  const url=makeUrl(encodePuzzle());
+  navigator.clipboard.writeText(url).then(()=>alert('퍼즐 링크가 복사되었어요!')).catch(()=>prompt('링크를 복사하세요:',url));
+}
+function refreshTeacher(){ load(); renderTeacher(); }
+function resetAll(){
+  if(!confirm('모든 데이터를 초기화할까요?')) return;
+  S={classTitle:'우리반 낱말퍼즐',students:{},consolidated:null};
+  save(); renderSetup();
+}
+function previewStudent(n){
+  const s=S.students[n];
+  document.getElementById('pm-title').textContent=`${n}님의 입력 내용`;
+  document.getElementById('pm-sub').textContent=s.submitted?'제출 완료':'아직 미제출';
+  document.getElementById('pm-words').innerHTML=s.words.filter(w=>w.word).map(w=>`
+    <div class="mw-row"><span class="mw-word">${w.word}</span><span class="mw-clue">${w.clue}</span></div>`).join('')||'<div style="font-size:13px;color:#4A6FA5;">입력된 단어가 없어요.</div>';
+  document.getElementById('preview-modal').classList.add('open');
+}
+function closePreview(){ document.getElementById('preview-modal').classList.remove('open'); }
+
+// ═══════════════════════════════════════════
+// SCREEN 3: STUDENT INPUT
+// ═══════════════════════════════════════════
+// Called when student scans QR → sees name list
+function renderStudentScreen(d){
+  setNav('학생 화면','flex');
+  const names = d.students || [];
+  const classTitle = d.classTitle || '낱말퍼즐 교실';
+
+  // Try to load already-saved local draft
+  let localDraft = {};
+  try{ localDraft=JSON.parse(localStorage.getItem('stu_draft_'+classTitle)||'{}'); }catch(e){}
+
+  document.getElementById('root').innerHTML=`
+    <div class="stu-header">
+      <h2>📖 ${classTitle}</h2>
+      <div class="sh-sub">아래에서 본인 이름을 선택하세요</div>
+    </div>
+    <div class="card">
+      <div class="card-title">학생 이름 선택</div>
+      <div class="name-select-list" id="name-list">
+        ${names.map(n=>{
+          const draft=localDraft[n];
+          const done=draft&&draft.submitted;
+          return `<button class="name-btn ${done?'submitted':''}" onclick="selectName('${n}','${encodeURIComponent(classTitle)}',${JSON.stringify(names).replace(/'/g,"&#39;")})">
+            <span>${n}</span>
+            ${done?'<span style="font-size:12px;color:#16A34A;">✓ 제출완료</span>':'<span style="font-size:12px;color:#4A6FA5;">→</span>'}
+          </button>`;
+        }).join('')}
       </div>
     </div>
-
-    ${state.consolidated?`
-    <div class="card">
-      <div class="card-title">취합된 퍼즐 미리보기</div>
-      <p style="font-size:13px;color:#4A6FA5;margin-bottom:12px;">총 ${countConsolidatedWords()}개 단어로 만들어진 퍼즐</p>
-      <button class="btn btn-primary" onclick="renderConsolidatedPuzzle()">퍼즐 풀기 화면으로 이동 →</button>
-    </div>`:''}
   `;
 }
 
-function refreshTeacher(){ load(); renderTeacher(); }
-
-function countConsolidatedWords(){
-  if(!state.consolidated) return 0;
-  return state.consolidated.placed ? state.consolidated.placed.length : 0;
+function selectName(name, classTitle, names){
+  renderStudentForm(name, decodeURIComponent(classTitle), names);
 }
 
-function resetAll(){
-  if(!confirm('모든 데이터를 초기화할까요?')) return;
-  state={mode:'teacher_setup',students:{},consolidated:null,classTitle:'우리반 낱말퍼즐'};
-  save(); renderSetup();
-}
+function renderStudentForm(name, classTitle, names){
+  setNav(name+'님','flex');
 
-// ══════════════════════════════════════════════
-//  SCREEN 3: STUDENT INPUT
-// ══════════════════════════════════════════════
-function renderStudentInput(name){
-  load();
-  if(!state.students[name]){
-    // name not found – show error
-    document.getElementById('app-root').innerHTML=`<div class="card" style="text-align:center;padding:3rem;"><div style="font-size:48px;margin-bottom:1rem;">😕</div><div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">학생을 찾을 수 없어요</div><div style="font-size:13px;color:#4A6FA5;">선생님께 올바른 링크를 받아주세요.</div></div>`;
-    return;
-  }
-  document.getElementById('nav-info').style.display='inline-block';
-  document.getElementById('nav-info').textContent=name+'님';
-  document.getElementById('nav-teacher-btn').style.display='inline-flex';
-
-  const s=state.students[name];
-  // ensure 3 word slots
+  // Load draft
+  const draftKey='stu_draft_'+classTitle;
+  let draft={};
+  try{ draft=JSON.parse(localStorage.getItem(draftKey)||'{}'); }catch(e){}
+  if(!draft[name]) draft[name]={words:[{word:'',clue:''},{word:'',clue:''},{word:'',clue:''}],submitted:false};
+  const s=draft[name];
   while(s.words.length<3) s.words.push({word:'',clue:''});
 
   const slots=s.words.slice(0,3).map((w,i)=>`
-    <div class="word-slot ${w.word?'filled':''}" id="slot-${i}">
-      <div class="ws-header">
+    <div class="ws ${w.word?'filled':''}" id="ws-${i}">
+      <div class="ws-top">
         <div class="ws-num">${i+1}</div>
         <div class="ws-title">단어 ${i+1}</div>
-        ${w.word?`<span style="font-size:12px;color:#16A34A;margin-left:auto;">✓ 입력됨</span>`:''}
+        ${w.word?`<span class="ws-check">✓</span>`:''}
       </div>
-      <div class="ws-fields">
-        <input type="text" id="word-${i}" placeholder="단어 (예: 봄바람)" value="${w.word||''}" onchange="updateWord(${i},'${name}')"/>
-        <input type="text" id="clue-${i}" placeholder="힌트 (예: 봄에 부는 따뜻한 바람)" value="${w.clue||''}" onchange="updateClue(${i},'${name}')"/>
-        <button class="btn btn-sky" onclick="saveWord(${i},'${name}')">저장</button>
+      <div class="ws-row">
+        <input type="text" id="w-${i}" placeholder="단어 (예: 봄바람)" value="${w.word||''}"/>
+        <input type="text" id="c-${i}" placeholder="힌트 (예: 봄에 부는 바람)"/>
+        <button class="btn btn-sky" onclick="saveWord(${i},'${name}','${classTitle}',${JSON.stringify(names).replace(/'/g,"&#39;")})">저장</button>
       </div>
       <div class="err" id="err-${i}"></div>
     </div>
   `).join('');
 
-  const allFilled = s.words.slice(0,3).every(w=>w.word&&w.clue);
+  // set clue values after render (avoid escaping issues)
+  setTimeout(()=>{
+    s.words.slice(0,3).forEach((w,i)=>{
+      const el=document.getElementById('c-'+i);
+      if(el) el.value=w.clue||'';
+    });
+  },0);
 
-  document.getElementById('app-root').innerHTML=`
-    <div class="student-header">
-      <h2>안녕하세요, ${name}님! 👋</h2>
-      <div class="sh-sub">${state.classTitle} &nbsp;|&nbsp; 단어 3개와 힌트를 입력해주세요</div>
+  const allFilled=s.words.slice(0,3).every(w=>w.word&&w.clue);
+
+  document.getElementById('root').innerHTML=`
+    <div class="stu-header">
+      <h2>📖 ${classTitle}</h2>
+      <div class="sh-name">✏️ ${name}님의 단어 입력</div>
+      <div class="sh-sub" style="margin-top:4px;">단어 3개와 힌트를 입력하고 제출하세요</div>
     </div>
 
     <div class="card">
-      <div class="card-title">나의 단어 입력 (총 3개)</div>
       <div class="word-slots">${slots}</div>
-
       ${s.submitted
-        ? `<div style="background:#DCFCE7;border-radius:10px;padding:14px 18px;font-size:14px;font-weight:700;color:#166534;">
-            ✅ 제출이 완료되었어요! 선생님이 퍼즐을 생성할 때까지 기다려주세요.
+        ? `<div style="background:#DCFCE7;border-radius:12px;padding:16px 18px;font-size:14px;font-weight:700;color:#166534;text-align:center;">
+            ✅ 제출 완료!<br><span style="font-size:13px;font-weight:400;margin-top:6px;display:block;">아래 제출 링크를 선생님께 보내주세요.</span>
+           </div>
+           <div style="margin-top:12px;">
+             <button class="btn btn-sky btn-lg" onclick="copySubmitLink('${name}','${classTitle}')">📤 제출 링크 복사해서 선생님께 전달</button>
            </div>`
-        : `<div id="submit-err" class="err" style="margin-bottom:8px;"></div>
-           <button class="btn btn-accent btn-lg" onclick="submitWords('${name}')" id="submit-btn" ${allFilled?'':'disabled'}>
-             ${allFilled?'📨 제출하기':'단어 3개를 모두 입력해주세요'}
+        : `<div id="submit-err" class="err" style="margin-bottom:8px;font-size:13px;"></div>
+           <button class="btn btn-accent btn-lg" id="submit-btn" onclick="submitWords('${name}','${classTitle}',${JSON.stringify(names).replace(/'/g,"&#39;")})" ${allFilled?'':'disabled'}>
+             ${allFilled?'📨 제출하기':'단어 3개를 모두 저장해주세요'}
            </button>`
       }
     </div>
 
     <div class="card" style="padding:1rem 1.5rem;">
-      <div style="font-size:12px;color:#4A6FA5;line-height:1.8;">
-        💡 <strong>팁:</strong> 단어는 한국어 2글자 이상, 힌트는 친구들이 맞힐 수 있도록 적어주세요.<br>
-        단어가 서로 겹치지 않아도 괜찮아요 — 선생님이 모두 모아서 퍼즐을 만들어요!
+      <div class="info-tip">
+        💡 단어는 한국어 2글자 이상, 힌트는 친구들이 맞힐 수 있게 적어주세요.<br>
+        단어가 서로 겹치지 않아도 괜찮아요!
       </div>
     </div>
   `;
 }
 
-function updateWord(i,name){ state.students[name].words[i].word=document.getElementById('word-'+i).value.trim(); }
-function updateClue(i,name){ state.students[name].words[i].clue=document.getElementById('clue-'+i).value.trim(); }
-
-function saveWord(i,name){
-  const w=document.getElementById('word-'+i).value.trim();
-  const c=document.getElementById('clue-'+i).value.trim();
+function saveWord(i, name, classTitle, names){
+  const w=document.getElementById('w-'+i).value.trim();
+  const c=document.getElementById('c-'+i).value.trim();
   const errEl=document.getElementById('err-'+i);
   if(!w){ errEl.textContent='단어를 입력해주세요.'; return; }
   if([...w].length<2){ errEl.textContent='단어는 2글자 이상이어야 합니다.'; return; }
   if(!c){ errEl.textContent='힌트를 입력해주세요.'; return; }
   errEl.textContent='';
-  state.students[name].words[i]={word:w,clue:c};
-  save();
-  // re-render to update slots
-  renderStudentInput(name);
+
+  const draftKey='stu_draft_'+classTitle;
+  let draft={};
+  try{ draft=JSON.parse(localStorage.getItem(draftKey)||'{}'); }catch(e){}
+  if(!draft[name]) draft[name]={words:[{word:'',clue:''},{word:'',clue:''},{word:'',clue:''}],submitted:false};
+  draft[name].words[i]={word:w,clue:c};
+  localStorage.setItem(draftKey, JSON.stringify(draft));
+  renderStudentForm(name, classTitle, names);
 }
 
-function submitWords(name){
-  const s=state.students[name];
-  const words=s.words.slice(0,3);
+function submitWords(name, classTitle, names){
+  const draftKey='stu_draft_'+classTitle;
+  let draft={};
+  try{ draft=JSON.parse(localStorage.getItem(draftKey)||'{}'); }catch(e){}
+  if(!draft[name]) return;
+  const words=draft[name].words.slice(0,3);
   const valid=words.every(w=>w.word&&[...w.word].length>=2&&w.clue);
-  if(!valid){ const el=document.getElementById('submit-err'); if(el) el.textContent='단어와 힌트를 모두 입력해주세요.'; return; }
-  s.submitted=true;
-  save();
-  renderStudentInput(name);
+  if(!valid){ const el=document.getElementById('submit-err'); if(el) el.textContent='단어와 힌트를 모두 저장해주세요.'; return; }
+  draft[name].submitted=true;
+  localStorage.setItem(draftKey, JSON.stringify(draft));
+  renderStudentForm(name, classTitle, names);
 }
 
-// ══════════════════════════════════════════════
-//  CONSOLIDATE – merge all words into one puzzle
-// ══════════════════════════════════════════════
+function copySubmitLink(name, classTitle){
+  const draftKey='stu_draft_'+classTitle;
+  let draft={};
+  try{ draft=JSON.parse(localStorage.getItem(draftKey)||'{}'); }catch(e){}
+  const words=(draft[name]&&draft[name].words)||[];
+  const hash=encodeSubmission(name,words);
+  const url=makeUrl(hash);
+  navigator.clipboard.writeText(url)
+    .then(()=>alert('📤 링크가 복사되었어요!\n이 링크를 카카오톡 등으로 선생님께 보내주세요.'))
+    .catch(()=>prompt('이 링크를 선생님께 보내주세요:', url));
+}
+
+// ═══════════════════════════════════════════
+// IMPORT: teacher opens submission link
+// ═══════════════════════════════════════════
+function importSubmission(d){
+  load();
+  const {name, words} = d;
+  if(!name||!words){ alert('잘못된 제출 링크입니다.'); return; }
+  if(!S.students[name]) S.students[name]={words:[],submitted:false};
+  S.students[name].words=words;
+  S.students[name].submitted=true;
+  save();
+  alert(`✅ ${name}님의 단어가 등록되었어요!\n\n${words.filter(w=>w.word).map(w=>`• ${w.word}: ${w.clue}`).join('\n')}`);
+  history.replaceState(null,'',location.pathname);
+  renderTeacher();
+}
+
+// ═══════════════════════════════════════════
+// CONSOLIDATE
+// ═══════════════════════════════════════════
 function consolidate(){
   load();
-  const allWords=[];
-  for(const [name,s] of Object.entries(state.students)){
+  const all=[];
+  for(const [n,s] of Object.entries(S.students)){
     for(const w of s.words){
-      if(w.word && w.clue && [...w.word].length>=2){
-        allWords.push({word:w.word, clue:`[${name}] ${w.clue}`});
-      }
+      if(w.word&&w.clue&&[...w.word].length>=2)
+        all.push({word:w.word, clue:`[${n}] ${w.clue}`});
     }
   }
-  if(allWords.length<2){ alert('단어가 부족해요. 학생들이 먼저 단어를 입력해야 합니다.'); return; }
-
-  // deduplicate
+  if(all.length<2){ alert('단어가 부족해요. 학생들이 먼저 단어를 입력해야 합니다.'); return; }
   const seen=new Set();
-  const unique=allWords.filter(w=>{ if(seen.has(w.word)) return false; seen.add(w.word); return true; });
-
+  const unique=all.filter(w=>{ if(seen.has(w.word)) return false; seen.add(w.word); return true; });
   const sorted=unique.sort((a,b)=>[...b.word].length-[...a.word].length);
   let best=null;
   for(let a=0;a<120;a++){
@@ -605,65 +670,50 @@ function consolidate(){
     if(r&&(!best||r.placed.length>best.placed.length)){ best=r; if(best.placed.length===sorted.length) break; }
   }
   if(!best){ alert('퍼즐 배치 실패. 다시 시도해주세요.'); return; }
-  state.consolidated=best;
+  S.consolidated=best;
   save();
   renderTeacher();
 }
 
-// ══════════════════════════════════════════════
-//  SCREEN 4: CONSOLIDATED PUZZLE (SOLVE)
-// ══════════════════════════════════════════════
-let placedWords=[],grid=[],gridSize={},selCell=null,selDir='across',activeWord=null;
+function showPuzzle(){ renderPuzzleFromData(S.consolidated, S.classTitle); }
 
-function renderConsolidatedPuzzle(){
-  if(!state.consolidated){ alert('아직 취합된 퍼즐이 없어요.'); return; }
-  load();
-  placedWords=[...state.consolidated.placed];
-  buildGrid(state.consolidated);
+// ═══════════════════════════════════════════
+// SCREEN 4: PUZZLE SOLVE
+// ═══════════════════════════════════════════
+let PW=[],G=[],GS={},SC=null,SD='across',AW=null;
 
-  document.getElementById('nav-info').style.display='inline-block';
-  document.getElementById('nav-info').textContent='퍼즐 풀기';
-  document.getElementById('nav-teacher-btn').style.display='inline-flex';
+function renderPuzzleFromData(layout, title){
+  if(!layout){ alert('퍼즐 데이터가 없어요.'); return; }
+  setNav('퍼즐 풀기','flex');
+  PW=[...layout.placed];
+  buildGrid(layout);
 
-  const wc=placedWords.length;
-  const names=Object.keys(state.students);
-
-  document.getElementById('app-root').innerHTML=`
-    <div class="big-puzzle-header">
-      <div class="bph-title">${state.classTitle}</div>
-      <div class="bph-meta">총 ${wc}개 단어 &nbsp;|&nbsp; ${names.length}명 참여</div>
+  document.getElementById('root').innerHTML=`
+    <div class="big-header">
+      <h2>${title||'우리반 낱말퍼즐'}</h2>
+      <p>총 ${PW.length}개 단어</p>
     </div>
     <div class="solve-layout">
       <div>
         <div id="crossword-grid"></div>
         <div class="action-bar">
-          <button class="btn btn-sky" onclick="checkAnswers()">✓ 채점하기</button>
-          <button class="btn btn-outline" onclick="revealSel()">👁 정답 보기</button>
-          <button class="btn btn-outline" onclick="clearAll()">↺ 다시 풀기</button>
-          <button class="btn btn-outline" onclick="showPuzzleShareModal()">🔗 공유</button>
+          <button class="btn btn-sky" onclick="checkAns()">✓ 채점</button>
+          <button class="btn btn-outline" onclick="revealSel()">👁 정답</button>
+          <button class="btn btn-outline" onclick="clearAll()">↺ 초기화</button>
         </div>
-        <span id="score-display"></span>
+        <div id="score-display"></div>
       </div>
       <div>
-        <div class="clue-box">
-          <div class="clue-sec-title">가로 힌트</div>
-          <div id="clues-across"></div>
-        </div>
-        <div class="clue-box">
-          <div class="clue-sec-title">세로 힌트</div>
-          <div id="clues-down"></div>
-        </div>
+        <div class="clue-box"><div class="clue-sec-title">가로 힌트</div><div id="clues-across"></div></div>
+        <div class="clue-box"><div class="clue-sec-title">세로 힌트</div><div id="clues-down"></div></div>
       </div>
     </div>
   `;
-
-  selCell=null; selDir='across'; activeWord=null;
+  SC=null; SD='across'; AW=null;
   renderGridDom();
 }
 
-// ══════════════════════════════════════════════
-//  CROSSWORD ENGINE
-// ══════════════════════════════════════════════
+// ── Grid engine ──
 function gc(w){ return [...w]; }
 
 function tryPlace(sorted){
@@ -677,20 +727,18 @@ function tryPlace(sorted){
         if(pwc[pi]===wc[wi2]){
           const nd=pw.dir==='across'?'down':'across';
           let r,c;
-          if(nd==='down'){r=pw.row-wi2;c=pw.col+pi;}
-          else{r=pw.row+pi;c=pw.col-wi2;}
+          if(nd==='down'){r=pw.row-wi2;c=pw.col+pi;}else{r=pw.row+pi;c=pw.col-wi2;}
           cands.push({word:w.word,clue:w.clue,row:r,col:c,dir:nd});
         }
       }
     }
     for(let i=cands.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cands[i],cands[j]]=[cands[j],cands[i]];}
-    // try intersecting first, then independent placement if no intersection
     let placed=false;
     for(const cand of cands){ if(canPlace(pos,cand)){ pos.push(cand); placed=true; break; } }
     if(!placed){
-      // place independently (no intersection required)
-      const independent=findIndependentPos(pos,w);
-      if(independent) pos.push(independent);
+      // independent placement
+      const ind=findIndependent(pos,w);
+      if(ind) pos.push(ind);
     }
   }
   if(!pos.length) return null;
@@ -700,36 +748,26 @@ function tryPlace(sorted){
   let maxR=0,maxC=0;
   for(const p of norm){
     const len=gc(p.word).length;
-    if(p.dir==='across'){ maxR=Math.max(maxR,p.row); maxC=Math.max(maxC,p.col+len-1); }
-    else{ maxR=Math.max(maxR,p.row+len-1); maxC=Math.max(maxC,p.col); }
+    if(p.dir==='across'){maxR=Math.max(maxR,p.row);maxC=Math.max(maxC,p.col+len-1);}
+    else{maxR=Math.max(maxR,p.row+len-1);maxC=Math.max(maxC,p.col);}
   }
   return{placed:norm,rows:maxR+2,cols:maxC+2};
 }
 
-function findIndependentPos(existing,w){
-  // build occupied map
+function findIndependent(existing,w){
   const occ=buildOcc(existing);
-  const wc=gc(w.word);
-  // find the bounding box
   let minR=Infinity,minC=Infinity,maxR=0,maxC=0;
-  for(const key of Object.keys(occ)){
-    const [r,c]=key.split(',').map(Number);
-    minR=Math.min(minR,r); minC=Math.min(minC,c);
-    maxR=Math.max(maxR,r); maxC=Math.max(maxC,c);
+  for(const k of Object.keys(occ)){
+    const [r,c]=k.split(',').map(Number);
+    minR=Math.min(minR,r);minC=Math.min(minC,c);maxR=Math.max(maxR,r);maxC=Math.max(maxC,c);
   }
-  // try placing to the right or below with a gap
-  const dirs=['across','down'];
-  for(const dir of dirs){
-    let r,c;
-    if(dir==='across'){ r=minR; c=maxC+3; }
-    else{ r=maxR+3; c=minC; }
-    const cand={word:w.word,clue:w.clue,row:r,col:c,dir};
-    if(canPlace(existing,cand)) return cand;
-    // try other side
-    if(dir==='across'){ cand.col=minC; cand.row=maxR+3; }
-    else{ cand.row=minR; cand.col=maxC+3; }
-    if(canPlace(existing,cand)) return cand;
-  }
+  const tries=[
+    {word:w.word,clue:w.clue,row:minR,col:maxC+3,dir:'across'},
+    {word:w.word,clue:w.clue,row:maxR+3,col:minC,dir:'down'},
+    {word:w.word,clue:w.clue,row:minR,col:maxC+3,dir:'down'},
+    {word:w.word,clue:w.clue,row:maxR+3,col:minC,dir:'across'},
+  ];
+  for(const t of tries){ if(canPlace(existing,t)) return t; }
   return null;
 }
 
@@ -738,8 +776,7 @@ function buildOcc(existing){
   for(const p of existing){
     const pc=gc(p.word);
     for(let i=0;i<pc.length;i++){
-      const r=p.dir==='across'?p.row:p.row+i;
-      const c=p.dir==='across'?p.col+i:p.col;
+      const r=p.dir==='across'?p.row:p.row+i, c=p.dir==='across'?p.col+i:p.col;
       occ[r+','+c]={letter:pc[i],dir:p.dir};
     }
   }
@@ -750,8 +787,7 @@ function canPlace(existing,cand){
   const occ=buildOcc(existing);
   const wc=gc(cand.word);
   for(let i=0;i<wc.length;i++){
-    const r=cand.dir==='across'?cand.row:cand.row+i;
-    const c=cand.dir==='across'?cand.col+i:cand.col;
+    const r=cand.dir==='across'?cand.row:cand.row+i, c=cand.dir==='across'?cand.col+i:cand.col;
     const k=r+','+c;
     if(occ[k]){ if(occ[k].letter!==wc[i]||occ[k].dir===cand.dir) return false; }
     const pr=cand.dir==='across'?r-1:r, pc2=cand.dir==='across'?c:c-1;
@@ -766,178 +802,123 @@ function canPlace(existing,cand){
 }
 
 function buildGrid(layout){
-  gridSize={rows:layout.rows,cols:layout.cols};
-  grid=Array.from({length:layout.rows},()=>Array.from({length:layout.cols},()=>({black:true,answer:'',number:null,wordIds:[]})));
+  GS={rows:layout.rows,cols:layout.cols};
+  G=Array.from({length:layout.rows},()=>Array.from({length:layout.cols},()=>({black:true,answer:'',number:null,wordIds:[]})));
   layout.placed.forEach((p,wi)=>{
     const pc=gc(p.word);
     for(let i=0;i<pc.length;i++){
       const r=p.dir==='across'?p.row:p.row+i, c=p.dir==='across'?p.col+i:p.col;
-      grid[r][c].black=false; grid[r][c].answer=pc[i]; grid[r][c].wordIds.push(wi);
+      G[r][c].black=false; G[r][c].answer=pc[i]; G[r][c].wordIds.push(wi);
     }
   });
   let num=1;
-  for(let r=0;r<gridSize.rows;r++) for(let c=0;c<gridSize.cols;c++){
-    if(grid[r][c].black) continue;
-    const sA=(c===0||grid[r][c-1].black)&&c+1<gridSize.cols&&!grid[r][c+1].black;
-    const sD=(r===0||grid[r-1][c].black)&&r+1<gridSize.rows&&!grid[r+1][c].black;
-    if(sA||sD){ grid[r][c].number=num; layout.placed.forEach(p=>{if(p.row===r&&p.col===c)p.number=num;}); num++; }
+  for(let r=0;r<GS.rows;r++) for(let c=0;c<GS.cols;c++){
+    if(G[r][c].black) continue;
+    const sA=(c===0||G[r][c-1].black)&&c+1<GS.cols&&!G[r][c+1].black;
+    const sD=(r===0||G[r-1][c].black)&&r+1<GS.rows&&!G[r+1][c].black;
+    if(sA||sD){ G[r][c].number=num; layout.placed.forEach(p=>{if(p.row===r&&p.col===c)p.number=num;}); num++; }
   }
 }
 
 function renderGridDom(){
-  const container=document.getElementById('crossword-grid');
-  container.style.gridTemplateColumns=`repeat(${gridSize.cols},38px)`;
-  container.style.gridTemplateRows=`repeat(${gridSize.rows},38px)`;
-  container.innerHTML='';
-  for(let r=0;r<gridSize.rows;r++) for(let c=0;c<gridSize.cols;c++){
-    const cell=grid[r][c]; const div=document.createElement('div');
+  const cont=document.getElementById('crossword-grid');
+  cont.style.gridTemplateColumns=`repeat(${GS.cols},38px)`;
+  cont.style.gridTemplateRows=`repeat(${GS.rows},38px)`;
+  cont.innerHTML='';
+  for(let r=0;r<GS.rows;r++) for(let c=0;c<GS.cols;c++){
+    const cell=G[r][c]; const div=document.createElement('div');
     div.className='cell '+(cell.black?'black':'white'); div.dataset.r=r; div.dataset.c=c;
     if(!cell.black){
       if(cell.number){const sp=document.createElement('span');sp.className='cnum';sp.textContent=cell.number;div.appendChild(sp);}
-      const inp=document.createElement('input');inp.type='text';inp.maxLength=2;inp.dataset.r=r;inp.dataset.c=c;inp.setAttribute('autocomplete','off');
-      inp.addEventListener('mousedown',e=>{e.preventDefault();if(selCell&&selCell[0]===r&&selCell[1]===c)selDir=selDir==='across'?'down':'across';selCell=[r,c];selectCell(r,c);inp.focus();});
-      inp.addEventListener('keydown',e=>handleKey(e,r,c));
-      inp.addEventListener('input',e=>{const chars=gc(e.target.value);if(chars.length>0){e.target.value=chars[chars.length-1];moveNext(r,c);}else e.target.value='';});
+      const inp=document.createElement('input');inp.type='text';inp.maxLength=2;
+      inp.addEventListener('mousedown',e=>{e.preventDefault();if(SC&&SC[0]===r&&SC[1]===c)SD=SD==='across'?'down':'across';SC=[r,c];selCell(r,c);inp.focus();});
+      inp.addEventListener('keydown',e=>hkey(e,r,c));
+      inp.addEventListener('input',e=>{const ch=gc(e.target.value);if(ch.length){e.target.value=ch[ch.length-1];mnext(r,c);}else e.target.value='';});
       div.appendChild(inp);
     }
-    container.appendChild(div);
+    cont.appendChild(div);
   }
-  renderCluesDom();
-  if(placedWords.length) selectCell(placedWords[0].row,placedWords[0].col);
+  renderClues();
+  if(PW.length) selCell(PW[0].row,PW[0].col);
 }
 
-function selectCell(r,c){
-  if(r<0||r>=gridSize.rows||c<0||c>=gridSize.cols||grid[r][c].black) return;
-  selCell=[r,c]; const wids=grid[r][c].wordIds; let found=null;
-  for(const wi of wids){if(placedWords[wi].dir===selDir){found=wi;break;}}
-  if(found===null&&wids.length){found=wids[0];selDir=placedWords[found].dir;}
-  activeWord=found; highlightCells(); updateClueHL();
-  const inp=document.querySelector(`input[data-r="${r}"][data-c="${c}"]`); if(inp) inp.focus();
+function selCell(r,c){
+  if(r<0||r>=GS.rows||c<0||c>=GS.cols||G[r][c].black) return;
+  SC=[r,c];
+  const wids=G[r][c].wordIds; let found=null;
+  for(const wi of wids){if(PW[wi].dir===SD){found=wi;break;}}
+  if(found===null&&wids.length){found=wids[0];SD=PW[found].dir;}
+  AW=found; hilite(); clueHL();
+  const inp=document.querySelector(`.cell[data-r="${r}"][data-c="${c}"] input`); if(inp) inp.focus();
 }
 
-function highlightCells(){
+function hilite(){
   document.querySelectorAll('.cell.white').forEach(el=>el.classList.remove('sel','hi'));
-  if(selCell){const el=document.querySelector(`.cell[data-r="${selCell[0]}"][data-c="${selCell[1]}"]`);if(el)el.classList.add('sel');}
-  if(activeWord!==null){const p=placedWords[activeWord];const len=gc(p.word).length;for(let i=0;i<len;i++){const r=p.dir==='across'?p.row:p.row+i,c=p.dir==='across'?p.col+i:p.col;const el=document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);if(el&&!(selCell&&selCell[0]===r&&selCell[1]===c))el.classList.add('hi');}}
+  if(SC){const el=document.querySelector(`.cell[data-r="${SC[0]}"][data-c="${SC[1]}"]`);if(el)el.classList.add('sel');}
+  if(AW!==null){const p=PW[AW];const len=gc(p.word).length;for(let i=0;i<len;i++){const r=p.dir==='across'?p.row:p.row+i,c=p.dir==='across'?p.col+i:p.col;const el=document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);if(el&&!(SC&&SC[0]===r&&SC[1]===c))el.classList.add('hi');}}
 }
 
-function handleKey(e,r,c){
-  if(e.key==='Backspace'){if(e.target.value)e.target.value='';else movePrev(r,c);e.preventDefault();return;}
-  const mv={'ArrowRight':()=>selDir==='across'?moveNext(r,c):(selDir='across',selectCell(r,c)),'ArrowLeft':()=>selDir==='across'?movePrev(r,c):(selDir='across',selectCell(r,c)),'ArrowDown':()=>selDir==='down'?moveNext(r,c):(selDir='down',selectCell(r,c)),'ArrowUp':()=>selDir==='down'?movePrev(r,c):(selDir='down',selectCell(r,c))};
-  if(mv[e.key]){mv[e.key]();e.preventDefault();}
-  if(e.key==='Tab'){e.preventDefault();nextWord(e.shiftKey);}
+function hkey(e,r,c){
+  if(e.key==='Backspace'){if(e.target.value)e.target.value='';else mprev(r,c);e.preventDefault();return;}
+  const m={ArrowRight:()=>SD==='across'?mnext(r,c):(SD='across',selCell(r,c)),ArrowLeft:()=>SD==='across'?mprev(r,c):(SD='across',selCell(r,c)),ArrowDown:()=>SD==='down'?mnext(r,c):(SD='down',selCell(r,c)),ArrowUp:()=>SD==='down'?mprev(r,c):(SD='down',selCell(r,c))};
+  if(m[e.key]){m[e.key]();e.preventDefault();}
+  if(e.key==='Tab'){e.preventDefault();nword(e.shiftKey);}
 }
-
-function moveNext(r,c){if(selDir==='across'&&c+1<gridSize.cols&&!grid[r][c+1].black)selectCell(r,c+1);else if(selDir==='down'&&r+1<gridSize.rows&&!grid[r+1][c].black)selectCell(r+1,c);}
-function movePrev(r,c){if(selDir==='across'&&c-1>=0&&!grid[r][c-1].black)selectCell(r,c-1);else if(selDir==='down'&&r-1>=0&&!grid[r-1][c].black)selectCell(r-1,c);}
-
-function nextWord(rev){
-  const num=placedWords.filter(p=>p.number).sort((a,b)=>a.number!==b.number?a.number-b.number:['across','down'].indexOf(a.dir)-['across','down'].indexOf(b.dir));
-  const cur=activeWord!==null?num.findIndex(p=>p===placedWords[activeWord]):-1;
+function mnext(r,c){if(SD==='across'&&c+1<GS.cols&&!G[r][c+1].black)selCell(r,c+1);else if(SD==='down'&&r+1<GS.rows&&!G[r+1][c].black)selCell(r+1,c);}
+function mprev(r,c){if(SD==='across'&&c-1>=0&&!G[r][c-1].black)selCell(r,c-1);else if(SD==='down'&&r-1>=0&&!G[r-1][c].black)selCell(r-1,c);}
+function nword(rev){
+  const num=PW.filter(p=>p.number).sort((a,b)=>a.number!==b.number?a.number-b.number:['across','down'].indexOf(a.dir)-['across','down'].indexOf(b.dir));
+  const cur=AW!==null?num.findIndex(p=>p===PW[AW]):-1;
   const nxt=rev?(cur-1+num.length)%num.length:(cur+1)%num.length;
-  const pw=num[nxt];selDir=pw.dir;activeWord=placedWords.indexOf(pw);selCell=[pw.row,pw.col];
-  highlightCells();updateClueHL();
-  const inp=document.querySelector(`input[data-r="${pw.row}"][data-c="${pw.col}"]`);if(inp)inp.focus();
+  const pw=num[nxt];SD=pw.dir;AW=PW.indexOf(pw);SC=[pw.row,pw.col];hilite();clueHL();
+  const inp=document.querySelector(`.cell[data-r="${pw.row}"][data-c="${pw.col}"] input`);if(inp)inp.focus();
 }
-
-function updateClueHL(){
+function clueHL(){
   document.querySelectorAll('.ci').forEach(el=>el.classList.remove('active'));
-  if(activeWord!==null){const el=document.querySelector(`.ci[data-wi="${activeWord}"]`);if(el){el.classList.add('active');el.scrollIntoView({block:'nearest'});}}
+  if(AW!==null){const el=document.querySelector(`.ci[data-wi="${AW}"]`);if(el){el.classList.add('active');el.scrollIntoView({block:'nearest'});}}
 }
-
-function renderCluesDom(){
+function renderClues(){
   const ac=document.getElementById('clues-across'),dn=document.getElementById('clues-down');
   ac.innerHTML='';dn.innerHTML='';
-  const sorted=placedWords.filter(p=>p.number).sort((a,b)=>a.number-b.number);
-  for(const pw of sorted){
-    const wi=placedWords.indexOf(pw); const div=document.createElement('div');
-    div.className='ci'; div.dataset.wi=wi;
+  PW.filter(p=>p.number).sort((a,b)=>a.number-b.number).forEach(pw=>{
+    const wi=PW.indexOf(pw); const div=document.createElement('div');
+    div.className='ci';div.dataset.wi=wi;
     div.innerHTML=`<span class="cn">${pw.number}</span><span>${pw.clue}</span>`;
-    div.addEventListener('click',()=>{selDir=pw.dir;activeWord=wi;selCell=[pw.row,pw.col];highlightCells();updateClueHL();const inp=document.querySelector(`input[data-r="${pw.row}"][data-c="${pw.col}"]`);if(inp)inp.focus();});
+    div.addEventListener('click',()=>{SD=pw.dir;AW=wi;SC=[pw.row,pw.col];hilite();clueHL();const inp=document.querySelector(`.cell[data-r="${pw.row}"][data-c="${pw.col}"] input`);if(inp)inp.focus();});
     (pw.dir==='across'?ac:dn).appendChild(div);
-  }
+  });
 }
-
-function checkAnswers(){
+function checkAns(){
   let ok=0,total=0;
-  for(let r=0;r<gridSize.rows;r++) for(let c=0;c<gridSize.cols;c++){
-    if(grid[r][c].black) continue; total++;
-    const inp=document.querySelector(`input[data-r="${r}"][data-c="${c}"]`);
+  for(let r=0;r<GS.rows;r++) for(let c=0;c<GS.cols;c++){
+    if(G[r][c].black) continue; total++;
+    const inp=document.querySelector(`.cell[data-r="${r}"][data-c="${c}"] input`);
     const cel=document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
     if(!inp) continue; cel.classList.remove('ok','ng');
-    if(inp.value){if(inp.value===grid[r][c].answer){ok++;cel.classList.add('ok');}else cel.classList.add('ng');}
+    if(inp.value){if(inp.value===G[r][c].answer){ok++;cel.classList.add('ok');}else cel.classList.add('ng');}
   }
   const pct=total?Math.round(ok/total*100):0;
   const cls=pct>=80?'g':pct>=50?'o':'r';
   document.getElementById('score-display').innerHTML=`<span class="score-b ${cls}">${ok}/${total}칸 정답 (${pct}%)</span>`;
 }
-
 function revealSel(){
-  if(activeWord===null) return;
-  const pw=placedWords[activeWord]; const pc=gc(pw.word);
-  for(let i=0;i<pc.length;i++){const r=pw.dir==='across'?pw.row:pw.row+i,c=pw.dir==='across'?pw.col+i:pw.col;const inp=document.querySelector(`input[data-r="${r}"][data-c="${c}"]`);if(inp)inp.value=pc[i];}
+  if(AW===null) return;
+  const pw=PW[AW]; const pc=gc(pw.word);
+  for(let i=0;i<pc.length;i++){const r=pw.dir==='across'?pw.row:pw.row+i,c=pw.dir==='across'?pw.col+i:pw.col;const inp=document.querySelector(`.cell[data-r="${r}"][data-c="${c}"] input`);if(inp)inp.value=pc[i];}
 }
-
 function clearAll(){
   document.querySelectorAll('#crossword-grid input').forEach(i=>i.value='');
   document.querySelectorAll('.cell.white').forEach(el=>el.classList.remove('ok','ng'));
   document.getElementById('score-display').innerHTML='';
 }
 
-// ══════════════════════════════════════════════
-//  SHARE MODAL
-// ══════════════════════════════════════════════
-let _shareUrl='';
-
-function showShareModal(name){
-  const url=makeStudentUrl(name);
-  _shareUrl=url;
-  document.getElementById('modal-title').textContent=`🔗 ${name}님 퍼즐 링크`;
-  document.getElementById('modal-sub').textContent=`이 링크를 ${name} 학생에게 공유하세요. 링크로 접속하면 단어를 입력할 수 있어요.`;
-  document.getElementById('modal-url').textContent=url;
-  document.getElementById('modal-toast').textContent='';
-  document.getElementById('share-modal').classList.add('open');
+// ── Helpers ──
+function setNav(label, teacherBtn){
+  document.getElementById('nav-info').style.display='inline-block';
+  document.getElementById('nav-info').textContent=label;
+  document.getElementById('nav-teacher-btn').style.display=teacherBtn;
 }
 
-function showPuzzleShareModal(){
-  const url=makePuzzleUrl();
-  _shareUrl=url;
-  document.getElementById('modal-title').textContent='🧩 완성된 퍼즐 공유';
-  document.getElementById('modal-sub').textContent='이 링크를 공유하면 누구나 완성된 퍼즐을 풀 수 있어요!';
-  document.getElementById('modal-url').textContent=url;
-  document.getElementById('modal-toast').textContent='';
-  document.getElementById('share-modal').classList.add('open');
-}
-
-function showAllLinksModal(){
-  const names=Object.keys(state.students);
-  const all=names.map(n=>`${n}: ${makeStudentUrl(n)}`).join('\n');
-  _shareUrl=all;
-  document.getElementById('modal-title').textContent='📋 전체 학생 링크 목록';
-  document.getElementById('modal-sub').textContent='복사 후 학생들에게 개별적으로 공유해주세요.';
-  document.getElementById('modal-url').textContent=all;
-  document.getElementById('modal-url').style.whiteSpace='pre';
-  document.getElementById('modal-url').style.fontSize='10px';
-  document.getElementById('modal-toast').textContent='';
-  document.getElementById('share-modal').classList.add('open');
-}
-
-function closeModal(){
-  document.getElementById('share-modal').classList.remove('open');
-  document.getElementById('modal-url').style.whiteSpace='nowrap';
-  document.getElementById('modal-url').style.fontSize='11px';
-}
-
-function copyModal(){
-  navigator.clipboard.writeText(_shareUrl).then(()=>{
-    document.getElementById('modal-toast').textContent='✓ 클립보드에 복사되었어요!';
-    setTimeout(()=>document.getElementById('modal-toast').textContent='',2500);
-  }).catch(()=>{
-    document.getElementById('modal-toast').textContent='복사 실패 — 직접 선택해서 복사해주세요.';
-  });
-}
-
-// ── INIT ──
 window.addEventListener('load', route);
 </script>
 </body>
